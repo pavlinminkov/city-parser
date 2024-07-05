@@ -1,15 +1,39 @@
 package com.pavlin.helper;
 
 import com.pavlin.model.Area;
-import java.util.List;
+import com.pavlin.reader.AreaReader;
+import java.util.Comparator;
 import java.util.Optional;
 
 public class AreaHelper {
 
-  public static Optional<Area> getAreaByPostCode(String postCode, List<Area> areas) {
+  public static Optional<Area> getAreaByPostCode(String postCode) {
+    var areas = AreaReader.readAreas();
+
+    if (areas.isEmpty()) {
+      return Optional.empty();
+    }
+
     return areas.stream()
-        .filter(tempArea -> AreaHelper.containsPostCode(tempArea, postCode))
+        .filter(area -> containsPostCode(area, postCode))
         .findFirst();
+  }
+
+  public static Optional<Area> getAreaByMostCities() {
+    var areas = AreaReader.readAreas();
+
+    if (areas.isEmpty()) {
+      return Optional.empty();
+    }
+
+    return areas.stream()
+        .max(Comparator.comparing(AreaHelper::getCityCountByArea));
+  }
+
+  public static int getCityCountByArea(Area area) {
+    return area.getMunicipalities().stream()
+        .mapToInt(w -> w.getCities().size())
+        .sum();
   }
 
   public static boolean containsPostCode(Area area, String postCode) {
