@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pavlin.mapper.AreaMapper;
 import com.pavlin.model.Area;
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,15 +17,18 @@ public class AreaReader {
   public static List<Area> readAreas() throws IOException {
     List<Area> areas = new ArrayList<>();
 
-    JsonNode rootNode = new ObjectMapper().readTree(new File(AREA_FILE_PATH));
-    rootNode.fieldNames().forEachRemaining(areaName -> {
-      JsonNode areaNode = rootNode.get(areaName);
+    try (InputStream inputStream = new FileInputStream(AREA_FILE_PATH)) {
+      JsonNode rootNode = new ObjectMapper().readTree(inputStream);
 
-      Area area = AreaMapper.mapAreaNodeToArea(areaName, areaNode);
+      rootNode.fieldNames().forEachRemaining(areaName -> {
+        JsonNode areaNode = rootNode.get(areaName);
 
-      areas.add(area);
-    });
+        Area area = AreaMapper.mapAreaNodeToArea(areaName, areaNode);
 
-    return areas;
+        areas.add(area);
+      });
+
+      return areas;
+    }
   }
 }
