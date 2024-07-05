@@ -1,8 +1,5 @@
 package com.pavlin.model;
 
-import lombok.Getter;
-
-@Getter
 public enum CityType {
 
   VILLAGE("с."), CITY("гр."), MONASTERY("ман."), RESORT_COMPLEX("к.к.");
@@ -20,6 +17,10 @@ public enum CityType {
       }
     }
     throw new IllegalArgumentException("No CityType with description " + description + " found.");
+  }
+
+  public String getDescription() {
+    return description;
   }
 
   @Override
