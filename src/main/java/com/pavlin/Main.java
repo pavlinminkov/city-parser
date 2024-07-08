@@ -4,6 +4,9 @@ import com.pavlin.helper.AreaHelper;
 import com.pavlin.helper.CityHelper;
 import com.pavlin.helper.MunicipalityHelper;
 import com.pavlin.model.Area;
+import com.pavlin.model.Municipality;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
@@ -14,10 +17,12 @@ public class Main {
     try (Scanner scanner = new Scanner(System.in)) {
       boolean exit = false;
       while (!exit) {
-        System.out.println("1. Get area/municipality/city by postcode");
-        System.out.println("2. Get largest area/municipality (by city count)");
-        System.out.println("3. Get all cities with their post code");
-        System.out.println("4. Exit");
+        List<String> options = Arrays.asList(
+            "Get area/municipality/city by postcode",
+            "Get largest area/municipality (by city count)",
+            "Get all cities with their post code",
+            "Exit");
+        listOptions(options);
 
         Integer input = getInt(scanner);
 
@@ -26,6 +31,7 @@ public class Main {
             handlePostCodeOption(scanner);
             break;
           case 2:
+            handleLargestCity(scanner);
             break;
           case 3:
             CityHelper.getCities()
@@ -44,19 +50,61 @@ public class Main {
     }
   }
 
+  private static void handleLargestCity(Scanner scanner) {
+    List<String> options = Arrays.asList(
+        "Get area by postcode",
+        "Get municipality by postcode",
+        "Exit");
+    listOptions(options);
+
+    Integer option = getInt(scanner);
+
+    switch (option) {
+      case 1:
+        Optional<Area> area = AreaHelper.getAreaByMostCities();
+
+        if (area.isEmpty()) {
+          System.out.println("Error loading areas");
+          return;
+        }
+
+        System.out.println("Largest area is " + area.get().getName());
+        break;
+      case 2:
+        Optional<Municipality> municipality = MunicipalityHelper.getMunicipalityByMostCities();
+
+        if (municipality.isEmpty()) {
+          System.out.println("Error loading municipalities");
+          return;
+        }
+
+        System.out.println("Largest municipality is " + municipality.get().getName());
+        break;
+      case 3:
+        break;
+      default:
+        System.out.println("Wrong input");
+        break;
+    }
+  }
+
   private static void handlePostCodeOption(Scanner scanner) {
+    List<String> options = Arrays.asList(
+        "Get area by postcode",
+        "Get municipality by postcode",
+        "Get city by postcode",
+        "Back"
+    );
+
     String postCode = getString("Enter post code: ", scanner);
 
-    System.out.println("1. Get area by postcode");
-    System.out.println("2. Get municipality by postcode");
-    System.out.println("3. Get city by postcode");
-    System.out.println("4. Back");
+    listOptions(options);
 
     Integer option = getInt(scanner);
     switch (option) {
       case 1:
         Optional<Area> area = AreaHelper.getAreaByPostCode(postCode);
-        if(area.isEmpty()) {
+        if (area.isEmpty()) {
           System.out.println("Post code not found");
         } else {
           System.out.println("Area: " + area.get().getName());
@@ -64,7 +112,7 @@ public class Main {
         break;
       case 2:
         var municipality = MunicipalityHelper.getMunicipalityByPostCode(postCode);
-        if(municipality.isEmpty()) {
+        if (municipality.isEmpty()) {
           System.out.println("Post code not found");
         } else {
           System.out.println("Municipality: " + municipality.get().getName());
@@ -72,7 +120,7 @@ public class Main {
         break;
       case 3:
         var city = CityHelper.getCityByPostCode(postCode);
-        if(city.isEmpty()) {
+        if (city.isEmpty()) {
           System.out.println("Post code not found");
         } else {
           System.out.println("City: " + city.get().getName());
@@ -119,4 +167,9 @@ public class Main {
     return input;
   }
 
+  private static void listOptions(List<String> options) {
+    for (int i = 0; i < options.size(); i++) {
+      System.out.println((i + 1) + ". " + options.get(i));
+    }
+  }
 }
