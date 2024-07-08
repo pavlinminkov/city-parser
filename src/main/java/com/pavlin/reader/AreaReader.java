@@ -19,7 +19,7 @@ public class AreaReader {
   private static List<Area> areas;
 
   public static List<Area> readAreas() {
-    if(Objects.isNull(areas)) {
+    if (Objects.isNull(areas)) {
       List<Area> tempAreas = new ArrayList<>();
 
       try (InputStream inputStream = new FileInputStream(AREA_FILE_PATH)) {

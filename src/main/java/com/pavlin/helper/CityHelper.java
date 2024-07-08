@@ -13,7 +13,7 @@ public class CityHelper {
   public static Optional<City> getCityByPostCode(String postCode) {
     var areas = AreaReader.readAreas();
 
-    if(areas.isEmpty()) {
+    if (areas.isEmpty()) {
       return Optional.empty();
     }
 
@@ -25,7 +25,7 @@ public class CityHelper {
   public static List<City> getCities() {
     var areas = AreaReader.readAreas();
 
-    if(areas.isEmpty()) {
+    if (areas.isEmpty()) {
       return Collections.emptyList();
     }
 
